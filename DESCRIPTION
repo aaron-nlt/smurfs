@@ -1,0 +1,18 @@
+Package: smurfs
+Title: Sampling Multivariate Uniform Records with Fixed Sum
+Version: 0.1.0
+Authors@R: person("Weinstock", "Aaron", email="aaron.weinstock@nltgis.com", role=c("aut","cre"))
+Description: R implementations of algorithms for the generation of unbiased task 
+    utilization vectors. A task utilization vector defines the utilization of a
+    set of n tasks with a fixed total utilization. The total utilization, as 
+    well as the range possible utilization values for each task, may vary case 
+    by case.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

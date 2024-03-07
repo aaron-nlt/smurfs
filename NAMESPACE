@@ -1,0 +1,7 @@
+export(drs)
+export(randfixedsum)
+export(scaled_flat_dirichlet)
+export(uunifast)
+export(uunifast_discard)
+importFrom("stats", "dist", "rgamma", "runif")
+

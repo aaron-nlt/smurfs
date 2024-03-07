@@ -1,0 +1,166 @@
+---
+title: "Basic usage of smurfs"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{basic_usage}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## A comparison of algorithms
+
+`smurfs` contains five functions that generate unbiased task utilization vectors. Each function is named after the algorithm used:
+
+- `drs`: Dirichlet-Rescale (DRS)
+- `randfixedsum`: Randfixedsum
+- `uunifast_discard`: UUniFast-Discard
+- `uunifast`: UUniFast
+- `scaled_flat_dirichlet`: scaled flat Dirichlet
+
+DRS is sort of a "general-purpose" solution to the generation of unbiased task utilization vectors. As such, users can usually just use this function. However, the other functions may be more efficient in their specific use cases.
+
+All of these functions will generate a length-$n$ vector $\mathbf{x} = (x_i, ..., x_n)$ where $\sum_{i=1}^n(x_i) = U$ and $x_i \in [a_i,b_i]$. They differ in the allowable domain of the $x_i$:
+
+- `drs`: $x_i \in [a_i,b_i]$. Each $x_i$ is allowed its own unique range of possible values. This is the most flexible option.
+- `randfixedsum`: $x_i \in [a,b]$. All $x_i$ have the same range, but both the upper and lower bound may be set by the user.
+- `uunifast_discard`: $x_i \in [0,1]$. All $x_i$ are between 0 and 1.
+- `uunifast`: $x_i \in [0,U]$. All $x_i$ are between 0 and U.
+- `scaled_flat_dirichlet`: $x_i \in [0,U]$. All $x_i$ are between 0 and U.
+
+## Usage
+
+### DRS
+
+The example code below will produce a vector $(x_1, x_2, x_3)$ where $\sum_{i=1}^3 = 20$, $1 \leq x_1 \leq 3$, $5 \leq x_2 \leq 10$, and $10 \leq x_3 \leq 20$.
+
+```{r DRS}
+# drs(
+#   n = 3,
+#   sumu = 20,
+#   lower_bounds = c(1,5,10),
+#   upper_bounds = c(3,10,20)
+# )
+```
+
+### Randfixedsum
+
+The example code below will produce a vector $(x_1, x_2, x_3)$ where $\sum_{i=1}^3 = 20$ and $5 \leq x_i \leq 10, \forall i$.
+
+```{r Randfixedsum}
+# randfixedsum(
+#   n = 3,
+#   m = 1
+#   s = 20,
+#   a = 5,
+#   b = 10
+# )
+```
+
+### UUniFast-Discard
+
+The example code below will produce a vector $(x_1, x_2, x_3)$ where $\sum_{i=1}^3 = 2$, $0 \leq x_i \leq 1, \forall i$.
+
+```{r UUniFast-Discard}
+# uunifast_discard(
+#   n = 3,
+#   U = 2
+# )
+```
+
+### UUniFast
+
+The example code below will produce a vector $(x_1, x_2, x_3)$ where $\sum_{i=1}^3 = 5$, $0 \leq x_i \leq 5, \forall i$.
+
+```{r UUniFast}
+# uunifast(
+#   n = 3,
+#   U = 5
+# )
+```
+
+### Scaled Flat Dirichlet
+
+The example code below will produce a vector $(x_1, x_2, x_3)$ where $\sum_{i=1}^3 = 5$, $0 \leq x_i \leq 5, \forall i$.
+
+```{r Scaled Flat Dirichlet}
+# scaled_flat_dirichlet(
+#   n = 3,
+#   U = 5
+# )
+```
+
+## Equivalence
+
+The functions in this package are parametrized according to the original code of the algorithms, but can often sample over the same space. The cases below details when the functions will generate the unbiased task utilization vectors from the same space.
+
+- **DRS $\leftrightarrow$ Randfixedsum**
+    - DRS: `n=n`, `sumu=U`, `lower_bound=rep(A,n)`, `upper_bound=rep(B,n)`
+    - Randfixedsum: `n=n`, `s=U`, `a=A`, `b=B`
+- **DRS $\leftrightarrow$ UUniFast-Discard**
+    - DRS: `n=n`, `sumu=U`, `lower_bound=rep(0,n)`, `upper_bound=rep(1,n)`
+    - UUniFast-Discard: `n=n`, `U=U`,
+- **DRS $\leftrightarrow$ UUniFast**
+    - DRS: `n=n`, `sumu=U`, `lower_bound=rep(0,n)`, `upper_bound=rep(U,n)`
+    - UUniFast: `n=n`, `U=U`
+- **DRS $\leftrightarrow$ scaled flat Dirichlet**
+    - DRS: `n=n`, `sumu=U`, `lower_bound=rep(0,n)`, `upper_bound=rep(U,n)`
+    - scaled flat Dirichlet: `n=n`, `U=U`
+- **Randfixedsum $\leftrightarrow$ UUniFast-Discard**
+    - Randfixedsum: `n=n`, `s=U`, `a=0`, `b=1`
+    - UUniFast-Discard: `n=n`, `U=U`,
+- **Randfixedsum $\leftrightarrow$ UUniFast**
+    - Randfixedsum: `n=n`, `s=U`, `a=0`, `b=U`
+    - UUniFast: `n=n`, `U=U`
+- **Randfixedsum $\leftrightarrow$ scaled flat Dirichlet**
+    - Randfixedsum: `n=n`, `s=U`, `a=0`, `b=U`
+    - scaled flat Dirichlet: `n=n`, `U=U`
+- **UUniFast-Discard $\leftrightarrow$ UUniFast**
+    - UUniFast-Discard: `n=n`, `U=1`
+    - UUniFast: `n=n`, `U=1`
+- **UUniFast-Discard $\leftrightarrow$ scaled flat Dirichlet**
+    - UUniFast-Discard: `n=n`, `U=1`
+    - scaled flat Dirichlet: `n=n`, `U=1`
+- **UUniFast $\leftrightarrow$ scaled flat Dirichlet**
+    - UUniFast: `n=n`, `U=U`
+    - scaled flat Dirichlet: `n=n`, `U=U`
+    
+As an example, note that the 5 functions below will generate unbiased task utilization vectors according to the same specifications: a length-3 vector with sum 1, where all three values are bounded by [0,1].
+
+```{r Equivalence code}
+# drs(
+#   n = 3,
+#   sumu = 1,
+#   lower_bounds = c(0,0,0),
+#   upper_bounds = c(1,1,1)
+# )
+
+# randfixedsum(
+#   n = 3,
+#   m = 1
+#   s = 1,
+#   a = 0,
+#   b = 1
+# )
+
+# uunifast_discard(
+#   n = 3,
+#   U = 1
+# )
+
+# uunifast(
+#   n = 3,
+#   U = 1
+# )
+
+# scaled_flat_dirichlet(
+#   n = 3,
+#   U = 1
+# )
+```
