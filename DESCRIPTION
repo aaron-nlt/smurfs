@@ -16,3 +16,5 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+URL: https://github.com/aaron-nlt/smurfs
+BugReports: https://github.com/aaron-nlt/smurfs/issues
