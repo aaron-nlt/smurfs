@@ -281,7 +281,7 @@ drs = function(n, sumu=1, lower_bounds=NULL, upper_bounds=NULL,
       if(length(upper_bounds) != 1){
         stop("length(upper_bounds) must be equal to n")
       }
-      if(sumu - upper_bounds[0] > float_tolerance){
+      if(sumu - upper_bounds[1] > float_tolerance){
         stop("Upper bounds must sum to more than sumu")
       }
     }
@@ -289,13 +289,13 @@ drs = function(n, sumu=1, lower_bounds=NULL, upper_bounds=NULL,
       if(length(lower_bounds) != 1){
         stop("length(lower_bounds) must be equal to n")
       }
-      if(lower_bounds[0] - sumu > float_tolerance){
+      if(lower_bounds[1] - sumu > float_tolerance){
         stop("Lower bounds bounds must sum to less than max utilization")
       }
-      if(!is.null(upper_bounds) & upper_bounds[0] == lower_bounds[0]){
+      if(!is.null(upper_bounds) & upper_bounds[1] == lower_bounds[1]){
         # sumu is prone to floating point error (if multiple bounds removed)
         # but if upper_bounds == lower_bounds, we know the true value
-        sumu = upper_bounds[0]
+        sumu = upper_bounds[1]
       }
       return(
         list(
