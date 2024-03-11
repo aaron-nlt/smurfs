@@ -331,7 +331,7 @@ drs = function(n, sumu=1, lower_bounds=NULL, upper_bounds=NULL,
     )
   }
   if(!is.null(lower_bounds)){
-    if(lower_bounds[1] - sumu > float_tolerance){ #i think this should be a sum
+    if(sum(lower_bounds) - sumu > float_tolerance){ #original DRS code has this wrong
       stop("Lower bounds bounds must sum to less than max utilization")
     }
     for(index in 1:n){
